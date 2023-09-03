@@ -1,5 +1,6 @@
 import discord
 from discord import app_commands
+from determinant import Determinant
 
 
 class aclient(discord.Client):
@@ -28,17 +29,29 @@ class aclient(discord.Client):
 
 client = aclient()
 tree = app_commands.CommandTree(client)
+determinant = Determinant()
 
 
 @tree.command(name="info", description="Кто я")
 async def self(interaction: discord.Interaction):
     await interaction.response.send_message("Видимо тебе память отшибло? Позволь напомнить, я Азимов - "
                                             "человек, ответственный за Научный совет и член Совета Вавилонии. Я "
-                                            "отвечаю за ведение научных и технических дел в Вавилонии. Я полностью "
-                                            "посвятил себя научным исследованиям и уже добился нескольких огромных "
-                                            "достижений в молодом возрасте, однако к сожалению у меня напрочь "
-                                            "отсутствуют социальные навыки. Поэтому не всегда могу выразить мысль "
-                                            "правильно, не думайте, что я злой.")
+                                            "отвечаю за ведение научных и технических дел в Вавилонии. Я "
+                                            "посвятил себя научным исследованиям и могу сказать, что добился "
+                                            "нескольких огромных"
+                                            "достижений в столь молодом возрасте.")
+
+
+@tree.command(name="build", description="Сборка фрейма и советы")
+async def bld(interaction: discord.Interaction, frame: str):
+    framename = determinant.determination(frame)
+    if framename:
+        embedVar = discord.Embed(title=f"{framename[1]} - {framename[0]}",
+                                 description="Сборки", color=0x00ff00)
+        embedVar.add_field(name="1.", value="Скоро тут будет много билдов а пока иди нахуй", inline=False)
+        await interaction.response.send_message(embed=embedVar)
+    else:
+        await interaction.response.send_message("Не помню такого фрейма, если честно...")
 
 
 client.run("")
