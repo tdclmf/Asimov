@@ -91,19 +91,33 @@ class Determinant:
                       "Lamia": "Lost Lullany",
                       "Roland": "Flambeau"}
         self.names_items = self.names.items()
+        self.classes = {"attacker": "<:ClassAttacker:1148494632964075631>"}
+        self.elements = {"phys": "<:phys:1148494931967627324>",
+                         "fire": "<:fire:1148494909863632936>"}
 
     def determination(self, frame):
         values = []
         myvalue = frame
+        import sqlite3
+        con = sqlite3.connect("frames.sqlite")
+        cur = con.cursor()
+        elements = cur.execute("""SELECT element FROM Elements WHERE frame = ?""", (frame,)).fetchall()
+        fr_class = cur.execute("""SELECT class FROM inftext WHERE frame = ?""", (frame,)).fetchone()
+        avatar = cur.execute("""SELECT avatar FROM images WHERE frame = ?""", (frame,)).fetchone()
+        con.close()
+        elements = [self.elements[j] for j in [i[0] for i in elements]]
+        fr_class = self.classes[fr_class[0]]
         for key, value in self.frames_items:
             if myvalue in value:
                 frame = str(key)
                 values.append(frame)
                 break
         for key2, value2 in self.names_items:
-            if frame in value2:
+            if frame.capitalize() in value2:
                 name = str(key2)
                 values.append(name)
                 break
-
+        values.append(elements)
+        values.append(fr_class)
+        values.append(avatar[0])
         return values

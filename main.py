@@ -1,6 +1,8 @@
 import discord
 from discord import app_commands
 from determinant import Determinant
+from build import Build
+import sqlite3
 
 
 class aclient(discord.Client):
@@ -42,14 +44,25 @@ async def self(interaction: discord.Interaction):
                                             "достижений в столь молодом возрасте.")
 
 
+# noinspection PyBroadException
 @tree.command(name="build", description="Сборка фрейма и советы")
 async def bld(interaction: discord.Interaction, frame: str):
-    framename = determinant.determination(frame)
-    if framename:
-        embedVar = discord.Embed(title=f"{framename[1]} - {framename[0]}",
-                                 description="Сборки", color=0x00ff00)
-        embedVar.add_field(name="1.", value="Скоро тут будет много билдов а пока иди нахуй", inline=False)
-        await interaction.response.send_message(embed=embedVar)
+    frameinf = determinant.determination(frame)
+    if frameinf:
+        try:
+            build = Build()
+            builds = build.build(frame)
+            keys = [*builds.keys()]
+            items = [*builds.values()]
+            embedVar = discord.Embed(title=f"{' '.join(frameinf[2])} {frameinf[1]} - {frameinf[0]} {frameinf[3]}",
+                                     description="Сборки", color=0x00ff00)
+            embedVar.set_thumbnail(url=f"{frameinf[4]}.png")
+            for i in range(len(keys)):
+                embedVar.add_field(name=f"{keys[i]}", value="", inline=False)
+                embedVar.set_image(url=f"{items[i]}.png")
+            await interaction.response.send_message(embed=embedVar)
+        except IndexError:
+            return
     else:
         await interaction.response.send_message("Не помню такого фрейма, если честно...")
 
