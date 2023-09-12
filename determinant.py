@@ -2,7 +2,8 @@ class Determinant:
     def __init__(self):
         self.frames = {"Lotus": ["lotus", "лотус"],
                        "Eclipse": ["eclipse", "эклипс", "еклипс", "затмение"],
-                       "Palefire": ["palefire", "палефайр", "палефаер", "пэйлфаер", "пэйлфайр", "бледный огонь"],
+                       "Palefire": ["palefire", "палефайр", "палефаер", "пэйлфаер", "пэйлфайр",
+                                    "бледный огонь"],
                        "Storm": ["storm", "шторм"],
                        "Dawn": ["dawn", "давн", "даун", "рассвет"],
                        "Lux": ["люкс", "lux"],
@@ -57,7 +58,7 @@ class Determinant:
                        "Feral Scent": ["feral scent", "ферал сент", "дикий запах"],
                        "Indomitus": ["indomitus", "noctis", "индомайтус", "индомитус", "неукротимый"],
                        "Echo": ["echo", "alisa", "эхо", "алиса"],
-                       "Lost Lullaby": ["lamia", "lost lullany", "потерянная колыбель",
+                       "Lost Lullaby": ["lamia", "lost lullaby", "потерянная колыбель",
                                         "забытая колыбель", "потерянная колыбельная",
                                         "забытая колыбельная"]}
         self.frames_items = self.frames.items()
@@ -88,30 +89,38 @@ class Determinant:
                       "No. 21": ["XXI", "Feral Scent"],
                       "Noctis": "Endomitus",
                       "Alisa": "Echo",
-                      "Lamia": "Lost Lullany",
+                      "Lamia": "Lost Lullaby",
                       "Roland": "Flambeau"}
         self.names_items = self.names.items()
-        self.classes = {"attacker": "<:ClassAttacker:1148494632964075631>"}
+        self.classes = {"attacker": "<:ClassAttacker:1148494632964075631>",
+                        "support": "<:support:1150313168418127872>",
+                        "tank": "<:tank:1150314706423259158>",
+                        "amlifier": "<:amplifier:1150314652962668674>",
+                        "vanguard": "<:vanguard:1150314611652968479>"}
         self.elements = {"phys": "<:phys:1148494931967627324>",
-                         "fire": "<:fire:1148494909863632936>"}
+                         "fire": "<:fire:1148494909863632936>",
+                         "light": "<:light:1150353947601670195>"}
 
     def determination(self, frame):
         values = []
         myvalue = frame
-        import sqlite3
-        con = sqlite3.connect("frames.sqlite")
-        cur = con.cursor()
-        elements = cur.execute("""SELECT element FROM Elements WHERE frame = ?""", (frame,)).fetchall()
-        fr_class = cur.execute("""SELECT class FROM inftext WHERE frame = ?""", (frame,)).fetchone()
-        avatar = cur.execute("""SELECT avatar FROM images WHERE frame = ?""", (frame,)).fetchone()
-        con.close()
-        elements = [self.elements[j] for j in [i[0] for i in elements]]
-        fr_class = self.classes[fr_class[0]]
         for key, value in self.frames_items:
             if myvalue in value:
                 frame = str(key)
                 values.append(frame)
                 break
+        import sqlite3
+        con = sqlite3.connect("frames.sqlite")
+        cur = con.cursor()
+        elements = cur.execute("""SELECT element FROM Elements WHERE frame = ?""", (frame.lower(),)).fetchall()
+        fr_class = cur.execute("""SELECT class FROM inftext WHERE frame = ?""", (frame.lower(),)).fetchone()
+        avatar = cur.execute("""SELECT avatar FROM images WHERE frame = ?""", (frame.lower(),)).fetchone()
+        con.close()
+        try:
+            elements = [self.elements[j] for j in [i[0] for i in elements]]
+            fr_class = self.classes[fr_class[0]]
+        except TypeError:
+            return
         for key2, value2 in self.names_items:
             if frame.capitalize() in value2:
                 name = str(key2)

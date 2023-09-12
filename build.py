@@ -1,7 +1,7 @@
 import sqlite3
 
 
-class Build():
+class Build:
 
     def __init__(self):
         self.builds = {"Main build": None,
@@ -11,7 +11,9 @@ class Build():
                        "QTE PPC": None,
                        "High Difficulty": None,
                        "Buff Set": None,
-                       "High Rank": None}
+                       "High Rank": None,
+                       "PPC": None,
+                       "QTE": None}
 
     def build(self, frame):
         j = 0
