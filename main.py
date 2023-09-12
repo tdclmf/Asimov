@@ -72,4 +72,4 @@ async def bld(interaction: discord.Interaction, frame: str):
                                                 "появится...")
 
 
-client.run("")
+client.run('')
